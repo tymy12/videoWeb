@@ -1,0 +1,36 @@
+<component name="libraryTable">
+  <library name="commons-logging-1.1.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/commons-logging-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/commons-logging-adapters-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/commons-logging-api-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/commons-logging-tests.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-aop-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-aspects-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-beans-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-context-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-context-support-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-core-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-expression-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-instrument-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-instrument-tomcat-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-jdbc-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-jms-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-messaging-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-orm-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-oxm-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-test-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-tx-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-web-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-webmvc-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-webmvc-portlet-4.1.1.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/spring-websocket-4.1.1.RELEASE.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/commons-logging-1.1.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/jar/springMVC/commons-logging-1.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

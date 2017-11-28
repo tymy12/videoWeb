@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>妆后视频系统</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/static/js/jquery-3.2.1.js"></script>
+    <link rel="stylesheet" type="text/css"
+          media="screen and (max-device-width: 800px)"
+          href="/static/css/tinyscreen.css"/>
+
+</head>
+<body>
+<h2 class="h2" align="center" style="margin-bottom: 20px">欢迎登录妆后视频播放系统</h2>
+<div style="width: 80%;margin:0 auto;align-content: center;margin-bottom: 20px" align="center">
+    <table>
+        <tr>
+            <th>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">视频查询</span>
+                    <input type="text" id="form-control" class="form-control" placeholder=""
+                           aria-describedby="basic-addon1">
+                </div>
+            </th>
+            <th align="center">
+                <div class="btn-group" role="group" aria-label="..." style="margin-left: 30px">
+                    <button id="queryButton" type="button" class="btn btn-default"
+                            style="padding: 0px ;width: 60px ;height: 30px">查询
+                    </button>
+                    <button type="button" class="btn btn-default" style="padding: 0px;width: 60px ;height: 30px"
+                            onclick="javascrtpt:window.location.href='/user/homePage'">
+                        全部</button>
+
+                </div>
+            </th>
+        </tr>
+    </table>
+</div>
+<div style="width: 80%;margin:0 auto">
+    <table style="text-align: center" class="table">
+        <thead>
+        <tr>
+            <th style="text-align: center">视频</th>
+            <th style="text-align: center;">上传时间</th>
+            <th style="text-align: center">播放</th>
+        </tr>
+        </thead>
+        <tbody class="tbody">
+        <!--<tr>-->
+        <!--<td>小白小白小白小白小白</td>-->
+        <!--<td>2017-11-23</td>-->
+        <!--<td>-->
+        <!--<button id="btn" style="height: 30px" type="button" class="btn btn-default">播放</button>-->
+        <!--</td>-->
+        <!--</tr>-->
+
+        </tbody>
+    </table>
+</div>
+<div align="center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li>
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <!--<li><a href="#">1</a></li>-->
+            <!--<li><a href="#">2</a></li>-->
+            <!--<li><a href="#">3</a></li>-->
+            <!--<li><a href="#">4</a></li>-->
+            <!--<li><a href="#">5</a></li>-->
+            <!--<li><a href="#">6</a></li>-->
+
+            <li class="pageing">
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var page = getQueryVariable("page")
+        login(page)
+
+    })
+
+
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+                return pair[1];
+            }
+        }
+        return ("1");
+    }
+
+    function login(page) {
+        $.ajax({
+
+            type: "POST",
+            url: "/userManage/homepage",
+            dataType: 'json',
+
+            data: {
+                page: page,
+                username: $("#username").val(),
+                //password: $.md5($("#passwd").val())
+                password: $("#passwd").val()
+
+            },
+
+            success: function (r) {
+
+
+                for (var i = 0; i < r.videos.length; i++) {
+                    $(".tbody").append(" <tr> <td>" + r.videos[i].videoName + "</td> <td>" + r.videos[i].date + "</td><td><a href='/userManage/play?src=" + r.videos[i].videoUrl + "' target='_blank'> <button  id='btn' style='height: 30px' type='button'class='btn btn-default'>播放</button></a> </td> </tr>");
+
+
+                }
+
+                var page = getQueryVariable("page")
+                page = new Number(page)
+
+                if (page > 1) {
+                    $(".uppage").attr("href", "/userManage/homepage?page=" + (page - 1));
+
+                }
+                if (page < r.pageNum) {
+                    $(".nextpage").attr("href", "/userManage/homepage?page=" + (page + 1));
+
+                }
+
+                if (r.pageNum < 5) {
+                    for (var i = 1; i <= r.pageNum; i++) {
+                        $(".pageing").before("<li class='li1'><a class='pages'  href='/userManage/homepage?page=" + i + "'>" + i + "</a></li>");
+                    }
+                } else {
+
+                    if (page < 4) {
+                        for (var i = 1; i <= 5; i++) {
+                            $(".pageing").before("<li class='li1'><a class='pages'  href='/userManage/homepage?page=" + i + "'>" + i + "</a></li>");
+                        }
+                    } else if ((r.pageNum - page) < 4) {
+                        for (var i = r.pageNum - 4; i <= r.pageNum; i++) {
+                            $(".pageing").before("<li class='li1'><a class='pages'  href='/userManage/homepage?page=" + i + "'>" + i + "</a></li>");
+
+                        }
+                    } else {
+
+                        for (var i = page - 2; i < page + 3; i++) {
+                            $(".pageing").before("<li class='li1'><a class='pages'  href='/userManage/homepage?page=" + i + "'>" + i + "</a></li>");
+
+                        }
+
+                    }
+                }
+
+
+            },
+        });
+
+    }
+
+    $("#queryButton").click(function () {
+        $(".tbody").empty()
+        $(".li1").remove()
+        $.ajax({
+
+            type: "POST",
+            url: "/userManage/videoQuery",
+            dataType: 'json',
+
+            data: {
+                videoname: $("#form-control").val(),
+
+            },
+
+            success: function (r) {
+
+
+                for (var i = 0; i < r.videos.length; i++) {
+                    $(".tbody").append(" <tr> <td>" + r.videos[i].videoName + "</td> <td>" + r.videos[i].date + "</td><td><a href='/userManage/play?src=" + r.videos[i].videoUrl + "' target='_blank'> <button  id='btn' style='height: 30px' type='button'class='btn btn-default'>播放</button></a> </td> </tr>");
+
+
+                }
+
+                var page = getQueryVariable("page")
+                page = new Number(page)
+
+
+                $(".uppage").attr("href", "#");
+
+
+                $(".nextpage").attr("href", "#");
+
+
+                if (r.pageNum < 5) {
+                    for (var i = 1; i <= r.pageNum; i++) {
+                        $(".pageing").before("<li class='li1'><a class='pages'  href='#'>" + i + "</a></li>");
+                    }
+
+                }
+
+
+            },
+        });
+
+
+    });
+
+
+</script>
+
+</body>
+</html>
