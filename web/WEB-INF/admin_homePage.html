@@ -14,7 +14,7 @@
 
 
 <h2 class="h2" align="center" style="margin-bottom: 30px">欢迎登录妆后视频管理系统</h2>
-<div></div>
+<!--<div></div>-->
 <div id="addWrapper" style="width: 80%;margin:0 auto;align-content: center;margin-bottom: 30px" align="center">
     <table>
         <tr>
@@ -29,7 +29,9 @@
             <th align="center">
                 <div class="btn-group" role="group" aria-label="..." style="margin-left: 30px">
                     <button id="queryButton" type="button" class="btn btn-default">查询</button>
-                    <button id="allUserBotton" type="button" class="btn btn-default" onclick="javascrtpt:window.location.href='/admin/homepage'">全部</button>
+                    <button id="allUserBotton" type="button" class="btn btn-default"
+                            onclick="javascrtpt:window.location.href='/admin/homepage'">全部
+                    </button>
 
                     <button type="button" class="btn btn-default insertuser">添加</button>
                 </div>
@@ -154,9 +156,7 @@
 
                         for (var i = page - 2; i < page + 3; i++) {
                             $(".pageing").before("<li class='li1'><a class='pages'  href='/adminManage/homepage?page=" + i + "'>" + i + "</a></li>");
-
                         }
-
                     }
                 }
 
@@ -243,9 +243,7 @@
 
 
                 for (var i = 0; i < r.users.length; i++) {
-                    $(".tbody").append(" <tr> <td>" + r.users[i].username + "</td> <td>" + r.users[i].mobile + "</td><td>"+r.users[i].date+"</td> </tr>");
-
-
+                    $(".tbody").append(" <tr> <td>" + r.users[i].username + "</td> <td>" + r.users[i].mobile + "</td><td>" + r.users[i].date + "</td> </tr>");
                 }
 
                 var page = getQueryVariable("page")

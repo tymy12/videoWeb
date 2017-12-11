@@ -3,6 +3,7 @@ package com.zhuanghou.videos.web.controller;
 import com.zhuanghou.videos.repository.domain.Manager;
 import com.zhuanghou.videos.service.ManagerService;
 import com.zhuanghou.videos.service.UserService;
+import com.zhuanghou.videos.tool.Rsa;
 import com.zhuanghou.videos.web.model.LoginResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,9 +40,13 @@ public class AdminLoginController {
      * @return
      */
     @RequestMapping("/login")
-    public String login(){
+    public String login(HttpServletRequest request, HttpServletResponse response){
 
-        return "admin_login";
+           if(Rsa.readToken(request,"admin")){
+               return "admin_homePage";
+           }else {
+               return "admin_login";
+           }
     }
 
     /**
@@ -52,17 +57,20 @@ public class AdminLoginController {
      */
     @RequestMapping(value="/loginAjax",method = RequestMethod.POST)
     @ResponseBody
-    public LoginResult adminLogin(HttpServletRequest request, HttpServletResponse response ,String username, String password){
+    public LoginResult adminLogin(HttpServletRequest request, HttpServletResponse response ,String username, String password) throws Exception {
         Manager manager = managerService.findManagerByUsername(username);
         System.out.println(manager.getUsername()+"===="+manager.getPassword()+"++++"+password);
 
         if(manager !=null && manager.isPasswordCorrect(password)){
-            Cookie cookie = new Cookie("admin","admin");
-            cookie.setMaxAge(30 * 60);// 设置为30min
-            cookie.setPath("/");
-            System.out.println("已添加===============");
-            response.addCookie(cookie);
-            return new LoginResult(0,"登录成功！");
+            //request.getSession().setAttribute("admin","admin");
+
+            String key=manager.getId()+"admin";
+            key=manager.getId()+":admin:"+ Rsa.encrypt(key);
+            Cookie cookie = new Cookie("admin",key);//创建新cookie
+            cookie.setMaxAge(30 * 60);// 设置存在时间为5分钟
+            cookie.setPath("/");//设置作用域
+            response.addCookie(cookie);//将cookie添加到response的cookie数组中返回给客户端
+             return new LoginResult(0,"登录成功！");
         }else{
             return new LoginResult(500,"登录失败！");
         }

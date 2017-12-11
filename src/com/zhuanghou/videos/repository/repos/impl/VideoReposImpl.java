@@ -1,10 +1,12 @@
 package com.zhuanghou.videos.repository.repos.impl;
 
+import com.mchange.v2.c3p0.impl.NewProxyResultSet;
 import com.mysql.jdbc.ResultSet;
 import com.sun.org.glassfish.external.statistics.annotations.Reset;
 import com.zhuanghou.videos.repository.domain.Video;
 import com.zhuanghou.videos.repository.repos.MysqlJDBC;
 import com.zhuanghou.videos.repository.repos.VideoRepos;
+import org.apache.commons.dbcp.DelegatingResultSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +19,6 @@ import java.util.List;
  */
 @Repository
 public class VideoReposImpl implements VideoRepos {
-    ResultSet rs;
     @Autowired
     public static VideoRepos videoRepos;
     @Override
@@ -26,15 +27,16 @@ public class VideoReposImpl implements VideoRepos {
         String sql="select *from video limit ?,?";
         String[] strings ={((page-1)*pageVideos)+"",pageVideos+""};
 
-        rs= (ResultSet) MysqlJDBC.select(sql,strings);
+        DelegatingResultSet newProxyResultSet =null;
+        newProxyResultSet = (DelegatingResultSet) MysqlJDBC.select(sql, strings)[0];
 
         try {
-            while (rs.next()){
+            while (newProxyResultSet.next()){
                 Video video=new Video();
-                video.setVideoName(rs.getString(2));
-                video.setVideoUrl(rs.getString(3));
-                video.setVideoIntroduce(rs.getString(4));
-                video.setDate(rs.getString(5));
+                video.setVideoName(newProxyResultSet.getString(2));
+                video.setVideoUrl(newProxyResultSet.getString(3));
+                video.setVideoIntroduce(newProxyResultSet.getString(4));
+                video.setDate(newProxyResultSet.getString(5));
                 videos.add(video);
             }
         } catch (Exception e) {
@@ -48,14 +50,20 @@ public class VideoReposImpl implements VideoRepos {
     public int getPageNum(int pageVideos) {
         String sql="select count(*) from video";
         String[] strings={};
-        rs= (ResultSet) MysqlJDBC.select(sql,strings);
+
+        DelegatingResultSet newProxyResultSet =null;
+        Object[] objects=MysqlJDBC.select(sql,strings);
+        newProxyResultSet = (DelegatingResultSet) objects[0];
+
         int pageNum = 0;
         try {
-            rs.next();
-            pageNum=Integer.valueOf(rs.getString(1));
+            newProxyResultSet.next();
+            pageNum=Integer.valueOf(newProxyResultSet.getString(1));
 
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+                MysqlJDBC.close(objects);
         }
         return pageNum;
     }
@@ -67,21 +75,26 @@ public class VideoReposImpl implements VideoRepos {
         List<Video> videos=new ArrayList();
 
 
-        rs= (ResultSet) MysqlJDBC.select(sql,strings);
+        DelegatingResultSet newProxyResultSet =null;
+
+        Object[] objects=MysqlJDBC.select(sql,strings);
+        newProxyResultSet = (DelegatingResultSet) objects[0];
 
         try {
-            while (rs.next()){
+            while (newProxyResultSet.next()){
                 Video video=new Video();
-                video.setVideoName(rs.getString(2));
-                video.setVideoUrl(rs.getString(3));
-                video.setVideoIntroduce(rs.getString(4));
-                video.setDate(rs.getString(5));
+                video.setVideoName(newProxyResultSet.getString(2));
+                video.setVideoUrl(newProxyResultSet.getString(3));
+                video.setVideoIntroduce(newProxyResultSet.getString(4));
+                video.setDate(newProxyResultSet.getString(5));
                 videos.add(video);
 
 
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            MysqlJDBC.close(objects);
         }
 
         return videos;

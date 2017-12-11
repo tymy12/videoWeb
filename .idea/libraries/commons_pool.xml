@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="commons-pool">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/commons-pool.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

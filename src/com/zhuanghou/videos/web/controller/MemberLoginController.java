@@ -3,6 +3,7 @@ package com.zhuanghou.videos.web.controller;
 
 import com.zhuanghou.videos.repository.domain.User;
 import com.zhuanghou.videos.service.UserService;
+import com.zhuanghou.videos.tool.Rsa;
 import com.zhuanghou.videos.web.model.LoginResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +30,12 @@ public class MemberLoginController {
      * @return
      */
     @RequestMapping(value = "/login",method = RequestMethod.GET)
-    public String login() {
-        return "user_login";
+    public String login(HttpServletRequest request, HttpServletResponse response) {
+        if(Rsa.readToken(request,"user")){
+            return "user_homePage";
+        }else{
+            return "user_login";
+        }
     }
 
     /**
@@ -41,13 +46,16 @@ public class MemberLoginController {
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
     public LoginResult login(HttpServletRequest request, HttpServletResponse response , String mobile){
-        List<User> user=userService.findManagerByUsername(mobile);
-        if(user.size()>0){
-
-            Cookie cookie = new Cookie("user","user");
-            cookie.setMaxAge(30 * 60);// 设置为30min
-            cookie.setPath("/");
-            System.out.println("已添加===============");
+        List<User> users=userService.findManagerByUsername(mobile);
+        User user=users.get(0);
+        if(users.size()>0){
+            //request.getSession().setAttribute("user","user");
+            String key=user.getMobile()+"user";
+            key=user.getMobile()+":user:"+ Rsa.encrypt(key);
+            Cookie cookie = new Cookie("user",key);//创建新cookie
+            cookie.setMaxAge(30 * 60);// 设置存在时间为5分钟
+            cookie.setPath("/");//设置作用域
+            response.addCookie(cookie);//将cookie添加到response的cookie数组中返回给客户端
             response.addCookie(cookie);
             return new LoginResult(0,"登录成功！");
         }else {

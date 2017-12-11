@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
+import com.zhuanghou.videos.tool.Rsa;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -50,33 +51,45 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
         String contextPath = request.getContextPath();
         String url = requestUri.substring(contextPath.length());
 
+//        String userLoginUrl = "";
+//        String adminLoginUrl = "";
+//
+//        if(requestUri.equals(userLoginUrl)){
+//            if(request.getSession().getAttribute("user")==null){
+//                request.getRequestDispatcher("").forward(request,response);
+//            }
+//            return true;
+//        }
+//
+//        if(requestUri.equals(adminLoginUrl)){
+//            if(request.getSession().getAttribute("admin")==null){
+//                request.getRequestDispatcher("").forward(request,response);
+//            }
+//            return true;
+//        }
+
 
         //log.info("requestUri:"+requestUri);
         //log.info("contextPath:"+contextPath);
         //log.info("url:"+url);
 
-        Map<String, Cookie> cookieMap = readCookieMap(request);
-        String admin = "";
-        String user = "";
-        try {
-            admin = cookieMap.get("admin").getValue();
-        } catch (Exception e) {
-
-        }
-
-        try {
-            user = cookieMap.get("user").getValue();
-        } catch (Exception e) {
-
-        }
-
-        System.out.println("requestUri=" + requestUri);
-//        System.out.println("user=" + user);
-//        System.out.println("admin=" + admin);
+//        Map<String, Cookie> cookieMap = readCookieMap(request);
+//        String admin = "";
+//        String user = "";
+//
+//            admin = (String) request.getSession().getAttribute("admin");
+//
+//
+//            user = (String) request.getSession().getAttribute("user");
 
 
-        String[] urls = {"/admin/login", "/WEB-INF/admin_login.html", "/admin/loginAjax", "/user/login", "/WEB-INF/user_login.html"};
+//
+//
 
+
+        String[] urls = {"/admin/login", "/admin/loginAjax", "/user/login", };
+
+        System.out.print(requestUri);
         for (int i = 0; i < urls.length; i++) {
             if (urls[i].equals(requestUri)) {
                 return true;
@@ -85,11 +98,12 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
 
         String[] strings = requestUri.split("/");
 
-        System.out.println("strings[1]"+strings[1]);
+
 
         if (strings[1].equals("adminManage") || strings[1].equals("admin")) {
 
-            if (!admin.equals("admin")) {
+
+            if (!isAdminLogined(request)) {
                 request.getRequestDispatcher("/admin/login").forward(request, response);
 
                 //log.info("Interceptor：跳转到login页面！");
@@ -99,20 +113,49 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
             return true;
         } else if (strings[1].equals("userManage") || strings[1].equals("user")) {
 
-            if (!user.equals("user")) {
+            if (!isUserLogined(request)) {
                 request.getRequestDispatcher("/user/login").forward(request, response);
             }
             return true;
 
-        }else {
-            if(!strings[1].equals("WEB-INF")){
-                request.getRequestDispatcher("/user/login").forward(request, response);
+        } else {
 
-            }
-            return  true;
+            request.getRequestDispatcher("/user/login").forward(request, response);
+            return true;
         }
+
     }
 
+    /**
+     * user_id:role:token
+     * 1.用RSA非对称加密算法生成一对公私钥
+     * 2.用私钥加密SHA256(USER_ID+":"+ROLE)=>TOKEN
+     * 2
+     * @param request
+     * @return
+     */
+    public boolean isAdminLogined(HttpServletRequest request){
+        String s=readToken(request, "admin");
+        if(s==null){
+            return false;
+        }
+        String[] strings=s.split(":");
+        String key=strings[0]+strings[1];
+        //System.out.println("return="+Rsa.encrypt(key).equals(strings[2]));
+
+        return  Rsa.encrypt(key).equals(strings[2]);
+
+    }
+    public boolean isUserLogined(HttpServletRequest request){
+        String s=readToken(request, "user");
+        if(s==null){
+            return false;
+        }
+        String[] strings=s.split(":");
+        String key=strings[0]+strings[1];
+
+        return  Rsa.encrypt(key).equals(strings[2]);
+    }
 
     /**
      * 在业务处理器处理请求执行完成后,生成视图之前执行的动作
@@ -141,14 +184,17 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
     }
 
 
-    private Map<String, Cookie> readCookieMap(HttpServletRequest request) {
-        Map<String, Cookie> cookieMap = new HashMap<>();
+    private  String readToken(HttpServletRequest request,String s) {
         Cookie[] cookies = request.getCookies();
-        if (null != cookies) {
+        String value=null;
+        if(cookies!=null) {
             for (Cookie cookie : cookies) {
-                cookieMap.put(cookie.getName(), cookie);
+
+                if (cookie.getName().equals(s)) {
+                    value = cookie.getValue();
+                }
             }
         }
-        return cookieMap;
+        return value;
     }
 }
